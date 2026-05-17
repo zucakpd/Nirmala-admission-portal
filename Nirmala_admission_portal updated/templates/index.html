@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Nirmala Admission Portal{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-3 fw-bold text-primary mb-4">
+                    <i class="bi bi-mortarboard-fill"></i> Nirmala Admission Portal
+                </h1>
+                <p class="lead mb-4">
+                    A secure, merit-based admission management system designed to streamline the college admission process with transparency and fairness.
+                </p>
+                <div class="d-grid gap-2 d-md-flex">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-box-arrow-in-right"></i> Staff Login
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <h3 class="card-title mb-4">
+                            <i class="bi bi-info-circle-fill text-primary"></i> Key Features
+                        </h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Secure Staff Login</strong> - Only authorized access
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Merit-Based Admission</strong> - Fair and transparent
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Category-wise Ranking</strong> - Caste and community filters
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Student Management</strong> - Add, edit, and track records
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Automated Ranking</strong> - Based on academic performance
+                            </li>
+                            <li class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                                <strong>Data Security</strong> - Secure database storage
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+.hero-section {
+
+    /* image + dark overlay */
+    background:
+        linear-gradient(rgba(0,40,60,0.65), rgba(0,40,60,0.65)),
+        url("https://i.ytimg.com/vi/rQDa7xuBbp0/maxresdefault.jpg");
+
+    background-size: cover;      /* full screen fill */
+    background-position: center; /* center align */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    min-height: 100vh;
+    color: white;
+}
+
+.hero-section .lead {
+    font-size: 1.25rem;
+    color: #ffffff;
+}
+</style>
+{% endblock %}

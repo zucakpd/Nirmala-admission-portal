@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Edit Student - Nirmala Admission Portal{% endblock %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-pencil-square"></i> Edit Student</h2>
+            <p class="text-muted">Update student information - {{ student.application_id }}</p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Edit Application Form</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('edit_student', id=student.id) }}">
+                <!-- Personal Information -->
+                <h5 class="mb-3"><i class="bi bi-person-vcard"></i> Personal Information</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ student.name }}" required>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ student.email }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ student.phone }}" pattern="[0-9]{10}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dob" class="form-label">DOB<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="{{ student.dob }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
+                </div>                        
+                <!-- Academic Information -->
+                <h5 class="mb-3"><i class="bi bi-mortarboard"></i> Academic Information</h5>
+                <div class="row g-3 mb-4">
+                   
+                    <div class="col-md-6">
+                        <label for="twelfth_marks" class="form-label">Overall Percentage(12th ) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.01" min="0" max="100" class="form-control" id="twelfth_marks" name="twelfth_marks" value="{{ student.twelfth_marks }}" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="course" class="form-label">Courses <span class="text-danger">*</span></label>
+                        <select class="form-select" id="course" name="course" required onchange="updateSubjectFields()">
+                            <option value="">Select Course</option>
+                            {% set courses_list = ['B.Sc Mathematics','B.Sc Chemistry','B.Sc Botany','B.Sc Zoology','B.Sc Physics','B.Sc Geography','B.A History','B.A Economics','B.Com'] %}
+                            {% for c in courses_list %}
+                            <option value="{{ c }}" {% if student.course == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <!-- Cutoff Subject Marks -->
+                <div id="subject-marks-section" style="display:none;">
+                    <div class="card border-warning mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="bi bi-calculator"></i> 12th Subject Marks <small class="fw-normal"></small></h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="cutoff-formula-info" class="alert alert-info mb-3" style="display:none;"></div>
+                            <div class="row g-3" id="subject-fields-container"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Category Information -->
+                <h5 class="mb-3"><i class="bi bi-tags"></i> Category Information</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                       <label for="religion" class="form-label">Religion <span class="text-danger">*</span></label>
+                       <select class="form-select" id="religion" name="religion" required>
+                            {% for val, lbl in [('Hindu','Hindu'),('Muslim','Muslim'),('Christian','Christian'),('Sikh','Sikh'),('Jain','Jain'),('Buddhist','Buddhist'),('Other','Other')]  %}
+                            <option value="{{ val }}" {% if student.religion == val %}selected{% endif %}>{{ lbl }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                     <div class="col-md-6">
+                       <label for="rc" class="form-label">RC (Roman Catholic) <span class="text-danger">*</span></label>
+                       <select class="form-select" id="rc" name="rc" required>
+                            {% for val, lbl in [('Yes','Yes'),('No','No')]  %}
+                            <option value="{{ val }}" {% if student.rc == val %}selected{% endif %}>{{ lbl }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="community" class="form-label">Community <span class="text-danger">*</span></label>
+                        <select class="form-select" id="community" name="community" required>
+                          {% for val, lbl in [('SC','SC (Scheduled Caste)'),('ST','ST (Scheduled Tribe)'),('OBC','OBC (Other Backward Class)'),('MBC','MBC (Most Backward Class)'),('BC','BC (Backward Class)'),('General','General')] %}
+                          <option value="{{ val }}" {% if student.community == val %}selected{% endif %}>{{ lbl }}</option>{% endfor %}</select>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('students') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-warning btn-lg">
+                        <i class="bi bi-check-circle"></i> Update Information
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+const COURSE_SUBJECTS =course_subjects | tojson ;
+const CUTOFF_FORMULAS =cutoff_formulas | tojson ;
+const SUBJECT_LABELS  =subject_labels | tojson ;
+
+// Existing subject marks from DB
+const EXISTING_MARKS = {
+    maths:        student.maths_marks || null,
+    physics:      student.physics_marks || null,
+    chemistry:    student.chemistry_marks || null,
+    biology:      student.biology_marks || null,
+    commerce:     student.commerce_marks || null, 
+    accountancy:  student.accountancy_marks || null,
+    history:      student.history_marks || null,
+    geography:    student.geography_marks || null,
+    economics:    student.economics_marks || null 
+};
+
+function updateSubjectFields() {
+    const course = document.getElementById('course').value;
+    const section = document.getElementById('subject-marks-section');
+    const container = document.getElementById('subject-fields-container');
+    const formulaInfo = document.getElementById('cutoff-formula-info');
+    container.innerHTML = '';
+    if (!course || !COURSE_SUBJECTS[course]) {
+        section.style.display = 'none';
+        return;
+    }
+    section.style.display = 'block';
+
+    const subjects = COURSE_SUBJECTS[course];
+    const formula  = CUTOFF_FORMULAS[course] || {};
+
+    const formulaParts = Object.entries(formula).map(([s, w]) =>
+        `<strong>${SUBJECT_LABELS[s] || s}</strong> × ${w}%`
+    ).join(' + ');
+    formulaInfo.innerHTML = `<i class="bi bi-info-circle"></i> <strong>Cutoff Formula:</strong> ${formulaParts}`;
+    formulaInfo.style.display = 'block';
+    subjects.forEach(subject => {
+        const weight  = formula[subject] || '';
+        const label   = SUBJECT_LABELS[subject] || subject;
+        const existing = EXISTING_MARKS[subject];
+        const col = document.createElement('div');
+        col.className = 'col-md-4';
+        col.innerHTML = `
+            <label class="form-label">
+                ${label} Marks
+                ${weight ? `<span class="badge bg-warning text-dark ms-1">Weight: ${weight}%</span>` : ''}
+                <span class="text-danger">*</span>
+            </label>
+            <input type="number" step="0.01" min="0" max="200"
+                   class="form-control" name="${subject}_marks"
+                   value="${existing !== null ? existing : ''}"
+                   placeholder="Marks out of 200" required>
+            <div class="form-text">Enter marks out of 200</div>
+        `;
+        container.appendChild(col);
+    });
+}
+
+// Run on page load to show fields for existing course
+window.addEventListener('DOMContentLoaded', updateSubjectFields);
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}View Student - Nirmala Admission Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+
+    <div class="row mb-4">
+        <div class="col">
+            <h2><i class="bi bi-person-vcard-fill"></i> Student Details</h2>
+            <p class="text-muted">Application ID: {{ student.application_id }}</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{{ url_for('students') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <!-- Score & Status Cards -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="card text-white bg-info">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase">Merit Score</h6>
+                    <h1 class="display-4">{{ "%.2f"|format(student.merit_score) }}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card {% if student.admission_status == 'Approved' %}bg-success{% elif student.admission_status == 'Rejected' %}bg-danger{% else %}bg-warning{% endif %} text-white">
+                <div class="card-body text-center">
+                    <h6 class="text-uppercase">Admission Status</h6>
+                    <h5 class="display-4">{{ student.admission_status }}</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="text-uppercase mb-3">Update Status</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('update_admission_status', id=student.id, status='Approved') }}" class="btn btn-success btn-sm">Approve</a>
+                        <a href="{{ url_for('update_admission_status', id=student.id, status='Rejected') }}" class="btn btn-danger btn-sm">Reject</a>
+                        <a href="{{ url_for('update_admission_status', id=student.id, status='Pending') }}" class="btn btn-warning btn-sm">Set Pending</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Personal Information -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Personal Information</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6"><strong>Name:</strong> {{ student.name }}</div>
+                <div class="col-md-6"><strong>Email:</strong> {{ student.email }}</div>
+                <div class="col-md-6"><strong>Phone:</strong> {{ student.phone }}</div>
+                <div class="col-md-6"><strong>DOB:</strong> {{ student.dob }}</div>
+                <div class="col-md-6"><strong>Gender:</strong> {{ student.gender }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Academic Information</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>12th Percentage:</strong> {{ "%.2f"|format(student.twelfth_marks) }}%</p>
+            <p><strong>Course Applied:</strong> {{ student.course }}</p>
+        </div>
+    </div>
+
+    <!-- Category Information -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Category Information</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Religion:</strong>
+                <span class="badge bg-secondary fs-6">
+                    {{ student.religion }}
+                </span>
+            </p>
+
+            <p><strong>Community:</strong>
+                <span class="badge bg-info fs-6">
+                    {{ student.community }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="card">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Application Timeline</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Submitted On:</strong>
+                {{ student.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+            </p>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
