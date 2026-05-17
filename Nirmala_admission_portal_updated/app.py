@@ -11,11 +11,10 @@ app.config['SECRET_KEY'] = 'nirmala-admission-portal-secret-key-2024'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///admission.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-import pdfkit
-from flask import render_template, make_response
-config = pdfkit.configuration(
-    wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
-)
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from io import BytesIO
+from flask import make_response
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -25,16 +24,62 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 @app.route("/download_pdf")
+
 @login_required
 def download_pdf():
 
     students = Student.query.order_by(Student.cutoff_score.desc()).all()
 
-    html = render_template("merit_pdf.html", students=students)
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
 
-    pdf = pdfkit.from_string(html, False, configuration=config)
+    width, height = A4
 
-    response = make_response(pdf)
+    # TITLE
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(220, height - 50, "MERIT LIST")
+
+    # HEADER
+    p.setFont("Helvetica-Bold", 10)
+    y = height - 100
+
+    p.drawString(50, y, "Rank")
+    p.drawString(100, y, "Name")
+    p.drawString(280, y, "Course")
+    p.drawString(420, y, "Cutoff")
+
+    p.line(50, y - 5, 550, y - 5)
+
+    y -= 25
+    p.setFont("Helvetica", 10)
+
+    for i, s in enumerate(students, 1):
+
+        if y < 60:
+            p.showPage()
+            y = height - 100
+
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(50, y, "Rank")
+            p.drawString(100, y, "Name")
+            p.drawString(280, y, "Course")
+            p.drawString(420, y, "Cutoff")
+            p.line(50, y - 5, 550, y - 5)
+
+            y -= 25
+            p.setFont("Helvetica", 10)
+
+        p.drawString(50, y, str(i))
+        p.drawString(100, y, str(s.name)[:25])
+        p.drawString(280, y, str(s.course)[:20])
+        p.drawString(420, y, str(s.cutoff_score))
+
+        y -= 18
+
+    p.save()
+    buffer.seek(0)
+
+    response = make_response(buffer.read())
     response.headers["Content-Type"] = "application/pdf"
     response.headers["Content-Disposition"] = "attachment; filename=merit_list.pdf"
 
