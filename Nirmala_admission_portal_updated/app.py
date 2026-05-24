@@ -535,6 +535,7 @@ def init_db():
             db.session.add(default_staff)
             db.session.commit()
             print("Default admin created: username=admin, password=admin123")
+init_db()
 if __name__ == '__main__':
-    init_db()
+    
     app.run(debug=True, host='0.0.0.0', port=5000)
